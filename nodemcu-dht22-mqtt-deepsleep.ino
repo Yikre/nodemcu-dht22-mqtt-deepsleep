@@ -10,6 +10,15 @@
   Licence : MIT
 */
 
+// - connect to to Wifi
+// - connec to to mqtt-broker
+// - read sensor every 10 seconds until countdown is over (see variable icountdown)
+// - go to deepsleep for 10 minutes
+// - reset to start over
+//
+// # optional: use onboard led (see variable useled = true/false)
+
+
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h> 
 #include "DHT.h"          // library for DHT-sensors
