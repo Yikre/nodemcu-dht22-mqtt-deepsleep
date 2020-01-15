@@ -28,8 +28,8 @@
 char message_buff[100];
 
 int icountdown = 5;             // count of sensor-measures before
-bool ledblink = false;          // Only blink if true
-int iledblink = 0;              // variable for increment count of led blinks
+bool useled = false;          // Only blink if true
+int iblink = 0;              // variable for increment count of led blinks
 long lastMsg = 0;
 long lastRecu = 0;
 
@@ -50,7 +50,7 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   Serial.begin(9600);
   delay(500);
-  if ( ledblink ) {
+  if ( useled ) {
     Serial.print("Ok. With Blink.");
   } else {
     Serial.print("Ok. Silent-mode. No Blink.");
@@ -62,7 +62,7 @@ void setup() {
   dht.begin();
 }
 
-//wifi-connection
+// Wifi-onnection
 void setup_wifi() {
   delay(10);
   Serial.println();
@@ -70,7 +70,7 @@ void setup_wifi() {
   Serial.println(wifi_ssid);
   WiFi.begin(wifi_ssid, wifi_password);
 
-  if ( ledblink ) {
+  if ( useled ) {
     while (WiFi.status() != WL_CONNECTED) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
@@ -86,15 +86,15 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
   Serial.print(" ");
 
-  if ( ledblink ) {
+  if ( useled ) {
     // 6 led blinks when WiFi is connected
-    iledblink = 0;
-    while (iledblink < 6) {
+    iblink = 0;
+    while (iblink < 6) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);                      // Wait for a second
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
       delay(50);                      // Wait for two seconds
-      iledblink++;
+      iblink++;
     }
   }
 }
@@ -123,7 +123,7 @@ void loop() {
   client.loop();
 
   long now = millis();
-  // Send a message every 10 seconds
+  // Read humidity and temperature every 10 seconds and publish to mqtt-broker until countdown is over
   if (now - lastMsg > 1000 * 10) {
     lastMsg = now;
     // Read humidity
@@ -152,15 +152,15 @@ void loop() {
     Serial.print("Countdown: ");
     Serial.println(icountdown);
 
-    if ( ledblink ) {
+    if ( useled ) {
       // ### 2 led blinks when topics are published to mqtt broker
-      iledblink = 0;
-      while (iledblink < 2) {
+      iblink = 0;
+      while (iblink < 2) {
         digitalWrite(LED_BUILTIN, LOW);                             // Turn the LED on by making the voltage LOW
         delay(25);                      // Wait for a second
         digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
         delay(75);                      // Wait for two seconds
-        iledblink++;
+        iblink++;
       }
       //
     }
@@ -170,28 +170,28 @@ void loop() {
     client.subscribe("homeassistant/switch1");
   }
 
-  // Go DeepSleep when enough measures were done
+  // Go DeepSleep when countdown is over
   if (icountdown == 0) {
     Serial.print("Decided to sleep for 10 minutes...");
 
-    if ( ledblink ) {
-      // ### 6 fast led blinks when topics are published to mqtt broker
-      iledblink = 0;
-      while (iledblink < 2) {
+    if ( useled ) {
+      // ### 2 led blinks before going to DeepSleep
+      iblink = 0;
+      while (iblink < 2) {
         digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
         delay(500);
         digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
         delay(500);
-        iledblink++;
+        iblink++;
       }
     }
     ESP.deepSleep(10 * 60 * 1000000);
   }
-  delay(5000);                                                    // reloop after 5 seconds
+  delay(5000);  // reloop after 5 seconds
 }
 
 // MQTT callback function
-// D'après http://m2mio.tumblr.com/post/30048662088/a-simple-example-arduino-mqtt-m2mio
+// from http://m2mio.tumblr.com/post/30048662088/a-simple-example-arduino-mqtt-m2mio
 void callback(char* topic, byte* payload, unsigned int length) {
 
   int i = 0;
