@@ -1,6 +1,6 @@
 /*
   humidity and temperature by 
-  NodeMCU + DHT22 9 LED + MQTT + DeepSleep + Homeassistant
+  NodeMCU + DHT22 + LED + MQTT + DeepSleep
 
   My first steps in C++
 
