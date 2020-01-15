@@ -1,7 +1,8 @@
 /*
-  Messung der Temperatur und Luftfeuchtigkeit
+  humidity and temperature by 
   NodeMCU + DHT22 9 LED + MQTT + DeepSleep + Homeassistant
 
+  My first steps in C++
 
   Auf Grundlage von Beträgen gefunden auf
   - https://diyprojects.io/esp8266-dht22-mqtt-make-iot-include-home-assistant/
@@ -10,8 +11,8 @@
   Licence : MIT
 */
 
-// - connect to to Wifi
-// - connec to to mqtt-broker
+// - connect to Wifi
+// - connect to MQTT-broker
 // - read sensor every 10 seconds until countdown is over (see variable icountdown)
 // - go to deepsleep for 10 minutes
 // - reset to start over
