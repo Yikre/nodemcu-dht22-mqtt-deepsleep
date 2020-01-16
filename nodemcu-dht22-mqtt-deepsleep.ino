@@ -17,7 +17,12 @@
 // - go to deepsleep for 10 minutes
 // - reset to start over
 //
-// # optional: use onboard led (see variable useled = true/false)
+// # optional: use onboard led (see variable useled = true/false); 
+//             different led blinking signals to distinct between events
+//             - waiting for wifi     - simple blinking
+//             - wifi-connect success - 6 fast blinks
+//             - read-sensor          - 2 fast blinks
+//             - go deepsleep         - 2 long blinks
 
 
 #include <ESP8266WiFi.h>
@@ -82,10 +87,11 @@ void setup_wifi() {
 
   if ( useled ) {
     while (WiFi.status() != WL_CONNECTED) {
+      // blink while waiting for WiFi
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(500);
+      delay(450);
       Serial.print(".");
     }
   }
@@ -97,13 +103,13 @@ void setup_wifi() {
   Serial.print(" ");
 
   if ( useled ) {
-    // 6 led blinks when WiFi is connected
+    // 6 fast led blinks when WiFi is connected
     iblink = 0;
     while (iblink < 6) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
-      delay(50);                      // Wait for a second
+      delay(50);                      
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(50);                      // Wait for two seconds
+      delay(50);         
       iblink++;
     }
   }
