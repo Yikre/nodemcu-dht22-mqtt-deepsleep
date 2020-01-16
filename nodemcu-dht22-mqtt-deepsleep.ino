@@ -4,26 +4,29 @@
 
   My first steps in C++
 
-  Auf Grundlage von Beträgen gefunden auf
+  Based on documentation found on:  
+  - https://randomnerdtutorials.com/esp8266-dht11dht22-temperature-and-humidity-web-server-with-arduino-ide/
   - https://diyprojects.io/esp8266-dht22-mqtt-make-iot-include-home-assistant/
   - https://randomnerdtutorials.com/esp8266-deep-sleep-with-arduino-ide/
   - https://lowvoltage.github.io/2017/07/09/Onboard-LEDs-NodeMCU-Got-Two
+  
   Licence : MIT
 */
 
-// - connect to Wifi
-// - connect to MQTT-broker
-// - read sensor every 10 seconds until countdown is over (see variable icountdown)
-// - go to deepsleep for 10 minutes
-// - reset to start over
-//
-// # optional: use onboard led (see variable useled = true/false); 
-//             different led blinking signals to distinct between events
-//             - waiting for wifi     - simple blinking
-//             - wifi-connect success - 6 fast blinks
-//             - read-sensor          - 2 fast blinks
-//             - go deepsleep         - 2 long blinks
-
+/*
+  Summary:
+  - connect to Wifi
+  - connect to MQTT-broker
+  - read sensor every 10 seconds until countdown is over (see variable icountdown)
+  - go to deepsleep for 10 minutes
+  - reset to start over
+  # optional: use onboard led (see variable useled = true/false); 
+              different led blinking signals to distinct between events
+              - waiting for wifi     - simple blinking
+              - wifi-connect success - 6 fast blinks
+              - read-sensor          - 2 fast blinks
+              - go deepsleep         - 2 long blinks
+*/
 
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h> 
