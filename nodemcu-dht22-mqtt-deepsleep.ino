@@ -96,7 +96,7 @@ void setup_wifi() {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(500);
+      delay(450);
       Serial.print(".");
     }
   }
@@ -112,9 +112,9 @@ void setup_wifi() {
     iblink = 0;
     while (iblink < 6) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
-      delay(25);                      // Wait for a second
+      delay(25);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(75);                      // Wait for two seconds
+      delay(75);
       iblink++;
     }
   }
@@ -177,7 +177,7 @@ void loop() {
       // ### 2 fast led blinks when topics are published to mqtt broker
       iblink = 0;
       while (iblink < 2) {
-        digitalWrite(LED_BUILTIN, LOW);                             // Turn the LED on by making the voltage LOW
+        digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
         delay(25);
         digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
         delay(75);
