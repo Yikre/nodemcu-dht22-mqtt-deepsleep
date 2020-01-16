@@ -112,9 +112,9 @@ void setup_wifi() {
     iblink = 0;
     while (iblink < 6) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
-      delay(50);                      // Wait for a second
+      delay(25);                      // Wait for a second
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(50);                      // Wait for two seconds
+      delay(75);                      // Wait for two seconds
       iblink++;
     }
   }
