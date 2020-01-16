@@ -32,21 +32,23 @@
 #include <PubSubClient.h> 
 #include "DHT.h"          // library for DHT-sensors
 
-#define wifi_ssid "<wifi-ssid>"
-#define wifi_password "<wifi-password>"
+// ### Sensetive Data ###
+#define wifi_ssid "<wifi-ssid>"             // wifi ssid
+#define wifi_password "<wifi-password>"     // wifi-password
 
-#define mqtt_server "<ip-adress-mqtt-host>"
-#define mqtt_user "<username>"                         // mqtt-user
-#define mqtt_password "<password>"                     // mqtt-password
+#define mqtt_server "<ip-adress-mqtt-host>"      // mqtt-ip
+#define mqtt_user "<username>"                   // mqtt-user
+#define mqtt_password "<password>"               // mqtt-password
+// ### Sensetive Data ###
 
-#define temperature_topic "<room>/sensor/temperature"  //Topic temperature
-#define humidity_topic "<room>/sensor/humidity"        //Topic humidity
+#define temperature_topic "dht22-1/sensor/temperature"  //Topic temperature
+#define humidity_topic "dht22-1/sensor/humidity"        //Topic humidity
 
 //Buffer to decode MQTT messages
 char message_buff[100];
 
 int icountdown = 5;             // count of sensor-measures before
-bool useled = false;          // Only blink if true
+bool useled = true;          // Only blink if true
 int iblink = 0;              // variable for increment count of led blinks
 long lastMsg = 0;
 long lastRecu = 0;
@@ -57,7 +59,7 @@ bool debug = false;             // Display log message if True
 
 // Un-comment your sensor
 //#define DHTTYPE DHT11       // DHT 11
-#define DHTTYPE DHT22         // DHT 22  (AM2302)
+#define DHTTYPE DHT22        // DHT 22  (AM2302)
 
 // Create objects
 DHT dht(DHTPIN, DHTTYPE);
@@ -65,13 +67,14 @@ WiFiClient espClient;
 PubSubClient client(espClient);
 
 void setup() {
-  pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   Serial.begin(9600);
-  delay(500);
+  delay(2000);
+  Serial.println("");
   if ( useled ) {
-    Serial.print("Ok. With Blink.");
+    Serial.println("Ok. With Blink.");
+    pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   } else {
-    Serial.print("Ok. Silent-mode. No Blink.");
+    Serial.println("Ok. Silent-mode. No Blink.");
     digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
   }
   setup_wifi();                           //Connect to Wifi network
@@ -80,21 +83,20 @@ void setup() {
   dht.begin();
 }
 
-// Wifi-onnection
+// Wifi-connection
 void setup_wifi() {
   delay(10);
-  Serial.println();
-  Serial.print("nodemcu connecting to ");
-  Serial.println(wifi_ssid);
+  Serial.println(" ");
+  Serial.println("nodemcu connecting to ssid: ");
+  Serial.print(wifi_ssid);
   WiFi.begin(wifi_ssid, wifi_password);
 
   if ( useled ) {
     while (WiFi.status() != WL_CONNECTED) {
-      // blink while waiting for WiFi
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(450);
+      delay(500);
       Serial.print(".");
     }
   }
@@ -106,13 +108,13 @@ void setup_wifi() {
   Serial.print(" ");
 
   if ( useled ) {
-    // 6 fast led blinks when WiFi is connected
+    // 6 led blinks when WiFi is connected
     iblink = 0;
     while (iblink < 6) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
-      delay(50);                      
+      delay(50);                      // Wait for a second
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(50);         
+      delay(50);                      // Wait for two seconds
       iblink++;
     }
   }
