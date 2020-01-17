@@ -97,8 +97,8 @@ void setup_wifi() {
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
       delay(450);
-      Serial.print(".");
     }
+  Serial.print(".");    
   }
 
   Serial.println("");
