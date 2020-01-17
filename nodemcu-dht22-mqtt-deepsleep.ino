@@ -91,24 +91,24 @@ void setup_wifi() {
   Serial.print(wifi_ssid);
   WiFi.begin(wifi_ssid, wifi_password);
 
-  if ( useled ) {
-    while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+ 
+    if ( useled ) {
+      // short led-blink while trying to connect to wifi
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(450);
-    }
-  Serial.print(".");    
+      delay(500);
+    }    
   }
 
-  Serial.println("");
-  Serial.println("nodemcu online");
-  Serial.print("=> ESP8266 IP address: ");
-  Serial.println(WiFi.localIP());
-  Serial.print(" ");
+  Serial.println("nodemcu online ");
+  Serial.print("=> local IP: ");
+  Serial.print(WiFi.localIP());
 
   if ( useled ) {
-    // 6 led blinks when WiFi is connected
+    // 6 fast led blinks when WiFi is connected
     iblink = 0;
     while (iblink < 6) {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
