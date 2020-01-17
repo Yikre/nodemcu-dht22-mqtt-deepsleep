@@ -68,7 +68,7 @@ PubSubClient client(espClient);
 
 void setup() {
   Serial.begin(9600);
-  delay(2000);
+  Serial.println("Power up. >>>");  
   Serial.println("");
   if ( useled ) {
   
@@ -107,6 +107,7 @@ void setup_wifi() {
   Serial.println("Ok. NodeMCU online ");
   Serial.print("=> local IP: ");
   Serial.print(WiFi.localIP());
+  Serial.println(" ");
 
   if ( useled ) {
     // 6 fast led blinks when WiFi is connected
@@ -194,8 +195,9 @@ void loop() {
 
   // Go DeepSleep when countdown is over
   if (icountdown == 0) {
+    if ( debug) {
     Serial.println("Decided to sleep for 10 minutes...");
-
+    }
     if ( useled ) {
       // ### 2 led blinks before going to DeepSleep
       iblink = 0;
@@ -207,6 +209,7 @@ void loop() {
         iblink++;
       }
     }
+    Serial.println("Power down. <<<<");  
     ESP.deepSleep(10 * 60 * 1000000);
   }
   delay(5000);  // reloop after 5 seconds
