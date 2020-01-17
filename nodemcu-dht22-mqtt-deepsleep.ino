@@ -71,11 +71,12 @@ void setup() {
   delay(2000);
   Serial.println("");
   if ( useled ) {
-    Serial.println("Ok. With Blink.");
+  
+    Serial.println("Ok. Use onboard-LED for status report.");
     pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   } else {
-    Serial.println("Ok. Silent-mode. No Blink.");
-    digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
+    Serial.println("Ok, dark-mode. No LED-Disco in my bedroom.");
+    digitalWrite(LED_BUILTIN, HIGH);      // Turn the LED off by making the voltage HIGH
   }
   setup_wifi();                           //Connect to Wifi network
   client.setServer(mqtt_server, 1883);    // Configure MQTT connexion
@@ -103,7 +104,7 @@ void setup_wifi() {
     }    
   }
 
-  Serial.println("nodemcu online ");
+  Serial.println("Ok. NodeMCU online ");
   Serial.print("=> local IP: ");
   Serial.print(WiFi.localIP());
 
@@ -124,7 +125,7 @@ void setup_wifi() {
 void reconnect() {
 
   while (!client.connected()) {
-    Serial.print("nodemcu connecting to MQTT broker ...");
+    Serial.print("nodemcu connecting to MQTT broker...  ");
     if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
       Serial.println("OK");
     } else {
@@ -193,7 +194,7 @@ void loop() {
 
   // Go DeepSleep when countdown is over
   if (icountdown == 0) {
-    Serial.print("Decided to sleep for 10 minutes...");
+    Serial.println("Decided to sleep for 10 minutes...");
 
     if ( useled ) {
       // ### 2 led blinks before going to DeepSleep
