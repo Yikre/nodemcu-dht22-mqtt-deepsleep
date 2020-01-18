@@ -105,8 +105,7 @@ void setup_wifi() {
 
   Serial.print("Ok. ");
   Serial.print("=> local IP: ");
-  Serial.print(WiFi.localIP());
-  Serial.println(" ");
+  Serial.println(WiFi.localIP());
 
   if ( useled ) {
     // 6 fast led blinks when WiFi is connected
@@ -194,9 +193,9 @@ void loop() {
 
   // Go DeepSleep when countdown is over
   if (icountdown == 0) {
-    Serial.println("Going to DeepSleep for ");
+    Serial.print("Going to DeepSleep for ");
     Serial.print(deepsleepduration);
-    Serial.print(" Minutes.");
+    Serial.println(" Minutes.");
     if ( useled ) {
       // ### 2 led blinks before going to DeepSleep
       iblink = 0;
