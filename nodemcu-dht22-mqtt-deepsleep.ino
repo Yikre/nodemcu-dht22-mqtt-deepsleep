@@ -69,13 +69,12 @@ PubSubClient client(espClient);
 void setup() {
   Serial.begin(9600);
   Serial.println("Power up. >>>");  
-  Serial.println("");
   if ( useled ) {
   
-    Serial.println("Ok. Use onboard-LED for status report.");
+    Serial.println("useled = true >> Use onboard-LED for status report.");
     pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   } else {
-    Serial.println("Ok, dark-mode. No LED-Disco in my bedroom.");
+    Serial.println("useled = false >> Dark-mode. No LED-Disco in my bedroom.");
     digitalWrite(LED_BUILTIN, HIGH);      // Turn the LED off by making the voltage HIGH
   }
   setup_wifi();                           //Connect to Wifi network
@@ -88,7 +87,7 @@ void setup() {
 void setup_wifi() {
   delay(10);
   Serial.println(" ");
-  Serial.println("nodemcu connecting to ssid: ");
+  Serial.print("Connecting to ssid: ");
   Serial.print(wifi_ssid);
   WiFi.begin(wifi_ssid, wifi_password);
 
@@ -104,7 +103,7 @@ void setup_wifi() {
     }    
   }
 
-  Serial.println("Ok. NodeMCU online ");
+  Serial.print("Ok. ");
   Serial.print("=> local IP: ");
   Serial.print(WiFi.localIP());
   Serial.println(" ");
@@ -126,7 +125,7 @@ void setup_wifi() {
 void reconnect() {
 
   while (!client.connected()) {
-    Serial.print("nodemcu connecting to MQTT broker...  ");
+    Serial.print("Connecting to MQTT broker...  ");
     if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
       Serial.println("OK");
     } else {
@@ -195,9 +194,9 @@ void loop() {
 
   // Go DeepSleep when countdown is over
   if (icountdown == 0) {
-    if ( debug) {
-    Serial.println("Decided to sleep for 10 minutes...");
-    }
+    Serial.println("Going to DeepSleep for ");
+    Serial.print(deepsleepduration);
+    Serial.print(" Minutes.");
     if ( useled ) {
       // ### 2 led blinks before going to DeepSleep
       iblink = 0;
@@ -210,7 +209,7 @@ void loop() {
       }
     }
     Serial.println("Power down. <<<<");  
-    ESP.deepSleep(10 * 60 * 1000000);
+    ESP.deepSleep(deepsleepduration * 60 * 1000000);  // 1 Second = 1000000
   }
   delay(5000);  // reloop after 5 seconds
 }
