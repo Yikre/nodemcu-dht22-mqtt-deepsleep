@@ -47,7 +47,8 @@
 //Buffer to decode MQTT messages
 char message_buff[100];
 
-int icountdown = 5;             // count of sensor-measures before
+int icountdown = 5;          // count of sensor-measures before deepsleep
+int deepsleepduration = 10;  // Duration of DeepSleep between measures in minutes
 bool useled = true;          // Only blink if true
 int iblink = 0;              // variable for increment count of led blinks
 long lastMsg = 0;
