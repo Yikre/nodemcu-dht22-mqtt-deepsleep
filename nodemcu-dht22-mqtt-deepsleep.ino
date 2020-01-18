@@ -86,7 +86,6 @@ void setup() {
 // Wifi-connection
 void setup_wifi() {
   delay(10);
-  Serial.println(" ");
   Serial.print("Connecting to ssid: ");
   Serial.print(wifi_ssid);
   WiFi.begin(wifi_ssid, wifi_password);
