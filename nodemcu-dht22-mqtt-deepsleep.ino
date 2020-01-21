@@ -47,10 +47,22 @@
 //Buffer to decode MQTT messages
 char message_buff[100];
 
-int icountdown = 5;          // count of sensor-measures before deepsleep
-int deepsleepduration = 10;  // Duration of DeepSleep between measures in minutes
-bool useled = true;          // Only blink if true
-int iblink = 0;              // variable for increment count of led blinks
+int icountdown = 5;           // count of sensor-measures before deepsleep
+
+int n = 0;                    // arrayposition
+
+float t[5] = { };             // array temperature
+float sumt = 0;               // sum of temperature for arithmetic mean
+float arithmetict = 0;        // arithmetic mean temperature
+
+float h[5] = { };             // array humidity
+float sumh = 0;               // sum of humidity for arithmetic mean
+float arithmetich = 0;        // arithmetic mean humidity
+
+int deepsleepduration = 10;   // Duration of DeepSleep between measures in minutes
+bool useled = true;           // Only blink if true
+int iblink = 0;               // variable for increment count of led blinks
+
 long lastMsg = 0;
 long lastRecu = 0;
 
@@ -71,7 +83,6 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Power up. >>>");  
   if ( useled ) {
-  
     Serial.println("useled = true >> Use onboard-LED for status report.");
     pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   } else {
@@ -99,8 +110,10 @@ void setup_wifi() {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(500);
-    }    
+      delay(450);
+    } else {
+      delay(500);   
+    }
   }
 
   Serial.print("Ok. ");
@@ -147,26 +160,38 @@ void loop() {
   // Read humidity and temperature every 10 seconds and publish to mqtt-broker until countdown is over
   if (now - lastMsg > 1000 * 10) {
     lastMsg = now;
-    // Read humidity
-    float h = dht.readHumidity();
+    
+    if ( debug ) {
+      Serial.print("arraynumber: ");
+      Serial.println(n);
+    }
+    
     // Read temperature in Celcius
-    float t = dht.readTemperature();
-
+    t[n] = dht.readTemperature();
+    sumt=sumt+t[n];   // sum measures for arithmetic mean
+    if ( debug ) {
+    Serial.print("sum temperautre: ");
+    Serial.println(sumt);
+    }
+    // Read humidity
+    h[n] = dht.readHumidity();
+    sumh=sumh+h[n];   // sum measures for arithmetic mean
+    if ( debug ) {
+      Serial.print("sum humidity: ");    
+      Serial.println(sumh);
+    }
     // Oh, nothing to send
-    if ( isnan(t) || isnan(h)) {
+    if ( isnan(t[n]) || isnan(h[n])) {
       Serial.println("No readings. Check DHT sensor!");
       return;
     }
 
     if ( debug ) {
       Serial.print("Temperature : ");
-      Serial.print(t);
+      Serial.print(t[n]);
       Serial.print(" | Humidity : ");
-      Serial.println(h);
+      Serial.println(h[n]);
     }
-    // Publish topics
-    client.publish(temperature_topic, String(t).c_str(), true);   // Publish temperature on temperature_topic
-    client.publish(humidity_topic, String(h).c_str(), true);      // and humidity
 
     //Loop countdown until DeepSleep
     icountdown = --icountdown;
@@ -185,6 +210,8 @@ void loop() {
       }
       //
     }
+
+    n++;
   }
   if (now - lastRecu > 100 ) {
     lastRecu = now;
@@ -193,6 +220,25 @@ void loop() {
 
   // Go DeepSleep when countdown is over
   if (icountdown == 0) {
+    
+    // calculate arithmetic mean
+
+    arithmetict = sumt/n;
+    arithmetich = sumh/n;
+   
+    Serial.print("Sending ");
+    Serial.print("temperature: ");    
+    Serial.print(arithmetict);
+    Serial.print(" | ");    
+    Serial.print("humidity: ");
+    Serial.print(arithmetich);
+    Serial.print("...");        
+   
+   // Publish topics
+    client.publish(temperature_topic, String(arithmetict).c_str(), true);   // Publish temperature on temperature_topic
+    client.publish(humidity_topic, String(arithmetich).c_str(), true);      // and humidity
+    Serial.println("Ok");
+    
     Serial.print("Going to DeepSleep for ");
     Serial.print(deepsleepduration);
     Serial.println(" Minutes.");
