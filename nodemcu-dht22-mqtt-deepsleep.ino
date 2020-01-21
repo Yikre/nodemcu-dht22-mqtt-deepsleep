@@ -47,7 +47,7 @@
 //Buffer to decode MQTT messages
 char message_buff[100];
 
-int icountdown = 5;          // count of sensor-measures before deepsleep
+int icountdown = 5;           // count of sensor-measures before deepsleep
 int deepsleepduration = 10;  // Duration of DeepSleep between measures in minutes
 bool useled = true;          // Only blink if true
 int iblink = 0;              // variable for increment count of led blinks
@@ -71,7 +71,6 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Power up. >>>");  
   if ( useled ) {
-  
     Serial.println("useled = true >> Use onboard-LED for status report.");
     pinMode(LED_BUILTIN, OUTPUT);           // Initialize the LED_BUILTIN pin as an output
   } else {
@@ -99,8 +98,10 @@ void setup_wifi() {
       digitalWrite(LED_BUILTIN, LOW);   // Turn the LED on by making the voltage LOW
       delay(50);
       digitalWrite(LED_BUILTIN, HIGH);  // Turn the LED off by making the voltage HIGH
-      delay(500);
-    }    
+      delay(450);
+    } else {
+      delay(500);   
+    }
   }
 
   Serial.print("Ok. ");
