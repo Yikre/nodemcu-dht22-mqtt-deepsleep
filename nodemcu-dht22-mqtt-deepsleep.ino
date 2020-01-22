@@ -253,6 +253,9 @@ void loop() {
         iblink++;
       }
     }
+    else {
+      delay(2000); // wait 2 seconds to give the device time to finish publishing before power down
+    }
     Serial.println("Power down. <<<<");  
     ESP.deepSleep(deepsleepduration * 60 * 1000000);  // 1 Second = 1000000
   }
