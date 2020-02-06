@@ -11,21 +11,6 @@
   Licence : MIT
 */
 
-/*
-  Summary:
-  - connect to Wifi
-  - connect to MQTT-broker
-  - read sensor every 10 seconds until countdown is over (see variable icountdown)
-  - go to deepsleep for 10 minutes
-  - reset to start over
-  # optional: use onboard led (see variable useled = true/false); 
-              different led blinking signals to distinct between events
-              - waiting for wifi     - simple blinking
-              - wifi-connect success - 6 fast blinks
-              - read-sensor          - 2 fast blinks
-              - go deepsleep         - 2 long blinks
-*/
-
 /*  //// Wiring
  *   
  *  //NodeMCU
@@ -45,6 +30,23 @@
  *  CSB   -> 3V3 
  *  SDO   -> 3V3
  */
+
+
+/*
+  Summary:
+  - connect to Wifi
+  - connect to MQTT-broker
+  - read sensor every 10 seconds until countdown is over (see variable icountdown)
+  - go to deepsleep for 10 minutes
+  - reset to start over
+  # optional: use onboard led (see variable useled = true/false); 
+              different led blinking signals to distinct between events
+              - waiting for wifi     - simple blinking
+              - wifi-connect success - 6 fast blinks
+              - read-sensor          - 2 fast blinks
+              - go deepsleep         - 2 long blinks
+*/
+
 
 /* --------------------------------------------- */
  
