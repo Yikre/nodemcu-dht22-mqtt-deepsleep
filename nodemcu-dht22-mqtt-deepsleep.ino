@@ -70,33 +70,35 @@
 // ### Sensetive Data ###
 
 //mqtt definitions
-#define temperature_topic "nodemcu-1/dht22/temperature"             //Topic temperature
-#define humidity_topic "nodemcu-1/dht22/humidity"                   //Topic humidity
-#define pressure_topic "nodemcu-1/bmp280/pressure"                  //Topic pressure
-#define secondarytemperature_topic "nodemcu-1/bmp280/temperature2"  //Topic temperature secondary
-#define altitude_topic "nodemcu-1/bmp280/altitude"                  //Topic altitude
+#define temperature_topic "nodemcu-1/dht22/temperature"  //Topic temperature
+#define humidity_topic "nodemcu-1/dht22/humidity"        //Topic humidity
+#define pressure_topic "nodemcu-1/bmp280/pressure"       //Topic pressure
+/*
+#define secondarytemperature_topic "nodemcu-1/bmp280/temperature2" //Topic temperature secondary
+#define altitude_topic "nodemcu-1/bmp280/altitude"       //Topic altitude
+*/
 
-//DHT22 definitions
+//DHT22 pins
 #define DHTPIN 14             // DHT Pin; NodeMCU D2 = 4; D4 = 2; D5 = 14
 // Un-comment your sensor
 //#define DHTTYPE DHT11       // DHT 11
 #define DHTTYPE DHT22         // DHT 22  (AM2302)
 
-//BMP280 definitions
-#define SEALEVELPRESSURE_HPA (1030.50)  // needed to calculate altitude, set sealevelpressure of your location here
 #define BMP_SCK  (13)
 #define BMP_MISO (12)
 #define BMP_MOSI (11)
 #define BMP_CS   (10)
 
+//bmp280 pins
 Adafruit_BMP280 bmp; // I2C
 //Adafruit_BMP280 bmp(BMP_CS); // hardware SPI
 //Adafruit_BMP280 bmp(BMP_CS, BMP_MOSI, BMP_MISO,  BMP_SCK);
 
-// Variables
+
+
+
 char message_buff[100];       //Buffer to decode MQTT messages
 
-int icountdown = 3;           // count of sensor-measures in one cycle
 int n = 0;                    // arrayposition
 
 float t[5] = { };             // array temperature
@@ -111,6 +113,7 @@ float p[5] = { };             // array pressure
 float sump = 0;               // sum of pressure for arithmetic mean
 float arithmeticp = 0;        // arithmetic mean pressure
 
+/*
 float t2[5] = { };             // array secondary temperature
 float sumt2 = 0;               // sum of secondary temperature for arithmetic mean
 float arithmetict2 = 0;        // arithmetic mean secondary temperature
@@ -118,14 +121,17 @@ float arithmetict2 = 0;        // arithmetic mean secondary temperature
 float a[5] = { };             // array altitude
 float suma = 0;               // sum of altitude for arithmetic mean
 float arithmetica = 0;        // arithmetic mean altitude
+*/
 
-int deepsleepduration = 10;   // Duration of DeepSleep between measures in minutes
-bool useled = true;           // Only blink if true
 int iblink = 0;               // variable for increment count of led blinks
-
 long lastMsg = 0;
 long lastRecu = 0;
 
+// Options
+int sMeasure = 5
+int icountdown = 3;           // count of sensor-measures in one cycle
+int deepsleepduration = 10;   // Duration of DeepSleep between cycle in minutes
+bool useled = false;           // Only blink if true
 bool debug = false;             // Display log message if True
 
 // Create nodemcu objects
@@ -134,8 +140,6 @@ PubSubClient client(espClient);
 
 // Create dht22 objects
 DHT dht(DHTPIN, DHTTYPE);
-
-/* --------------------------------------------- */
 
 void setup() {
   Serial.begin(9600);
@@ -209,7 +213,7 @@ void setup_wifi() {
 void reconnect() {
 
   while (!client.connected()) {
-    Serial.print("Connecting to MQTT broker.5757657678687876876876j5jj5..  ");
+    Serial.print("Connecting to MQTT broker...  ");
     if (client.connect("ESP8266Client", mqtt_user, mqtt_password)) {
       Serial.println("OK");
     } else {
@@ -221,8 +225,6 @@ void reconnect() {
   }
 }
 
-/* --------------------------------------------- */
-
 void loop() {
   if (!client.connected()) {
     reconnect();
@@ -230,8 +232,8 @@ void loop() {
   client.loop();
 
   long now = millis();
-  // Read humidity and temperature every 10 seconds and publish to mqtt-broker until countdown is over
-  if (now - lastMsg > 1000 * 10) {
+  // Read humidity and temperature every [sMeasure] seconds and publish to mqtt-broker until countdown is over
+  if (now - lastMsg > 1000 * sMeasure) {
     lastMsg = now;
     
     if ( debug ) {
@@ -260,6 +262,7 @@ void loop() {
     }
 
     // Read BMP280 temperature in Celcius
+/*
     t2[n] = bmp.readTemperature();
     sumt2=sumt2+t2[n];   // sum measures for arithmetic mean
     if ( debug ) {
@@ -269,6 +272,7 @@ void loop() {
       Serial.print(sumt2);
       Serial.println(" °C");      
     }
+*/
     // Read BMP280 pressure in hPa
     p[n] = bmp.readPressure()/100;
     sump=sump+p[n];   // sum measures for arithmetic mean
@@ -279,6 +283,7 @@ void loop() {
       Serial.print(sump);
       Serial.println(" hPa");      
     }
+/*    
     // Read BMP280 altitude
     a[n] = bmp.readAltitude(SEALEVELPRESSURE_HPA);
     suma=suma+a[n];   // sum measures for arithmetic mean
@@ -289,7 +294,7 @@ void loop() {
       Serial.print(suma);
       Serial.println(" m");      
     }
-
+*/
     if ( debug ) {
       Serial.print("Temperature : ");
       Serial.print(t[n]);
@@ -329,9 +334,11 @@ void loop() {
     arithmetict = sumt/n;     // mean of dht22 temperature
     arithmetich = sumh/n;     // mean of dht22 humidity
     arithmeticp = sump/n;     // mean of bmp280 pressure  
+/*    
     arithmetica = suma/n;     // mean of bmp280 altitude
     arithmetict2 = sumt2/n;   // mean of bmp280 temperature
-
+*/
+    
     // Announce publishing of values
     Serial.print("Sending ");
     Serial.print("temperature: ");    
@@ -343,19 +350,23 @@ void loop() {
     Serial.print("pressure: ");
     Serial.print(arithmeticp);    
     Serial.print(" | ");    
+/*  
     Serial.print("altitude: ");
     Serial.print(arithmetica);
     Serial.print(" | ");    
     Serial.print("secondary temperature: ");
     Serial.print(arithmetict2); 
     Serial.print("...");        
+*/
    
    // Publish topics
     client.publish(temperature_topic, String(arithmetict).c_str(), true);                 // Publish dht22 temperature on temperature_topic
     client.publish(humidity_topic, String(arithmetich).c_str(), true);                    // Publish dht22 humidity on humidity_topic
     client.publish(pressure_topic, String(arithmeticp).c_str(), true);                    // Publish bmp280 humidity on humidity_topic
+/*    
     client.publish(secondarytemperature_topic, String(arithmetict2).c_str(), true);       // Publish bmp280 temperature on humidity_topic
     client.publish(altitude_topic, String(arithmetica).c_str(), true);                    // Publish bmp280 altitude on humidity_topic
+*/
     Serial.println("Ok"); // Done
     
     Serial.print("Going to DeepSleep for ");
@@ -380,8 +391,6 @@ void loop() {
   }
   delay(5000);  // reloop after 5 seconds
 }
-
-/* --------------------------------------------- */
 
 // MQTT callback function
 // from http://m2mio.tumblr.com/post/30048662088/a-simple-example-arduino-mqtt-m2mio
